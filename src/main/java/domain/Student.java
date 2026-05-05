@@ -1,5 +1,10 @@
 package domain;
 
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class Student extends User {
     /**
      * Allows students to borrow a book, up to 5 total
