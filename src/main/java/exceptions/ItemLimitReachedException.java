@@ -1,4 +1,10 @@
 package exceptions;
 
-public class ItemLimitReachedException {
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
+public class ItemLimitReachedException extends RuntimeException {
+    public ItemLimitReachedException(String message) {
+        super(message);
+    }
 }

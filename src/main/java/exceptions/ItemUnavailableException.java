@@ -1,4 +1,10 @@
 package exceptions;
 
-public class ItemUnavailableException {
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
+public class ItemUnavailableException extends RuntimeException {
+    public ItemUnavailableException(String message) {
+        super(message);
+    }
 }
