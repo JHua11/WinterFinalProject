@@ -1,5 +1,7 @@
 package domain;
 
+import exceptions.ItemLimitReachedException;
+import exceptions.ItemUnavailableException;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -14,7 +16,15 @@ public class Teacher extends User {
      * @return whether the operation was successful
      */
     @Override
-    public boolean borrow(Item item) {
-
+    public boolean borrow(Item item) throws ItemLimitReachedException, ItemUnavailableException {
+        if (borrowedItems.size() == MAX_ITEMS) {
+            throw new ItemLimitReachedException();
+        }
+        if (item.status != Item.Status.IN_STORE) {
+            throw new ItemUnavailableException();
+        }
+        borrowedItems.add(item);
+        item.setStatus(Item.Status.BORROWED);
+        return true;
     }
 }

@@ -25,11 +25,14 @@ public abstract class User {
         // TODO: add new users to library list of users
     }
 
-    public boolean borrow(Item item) {
-
-    }
+    public abstract boolean borrow(Item item);
 
     public boolean returnItem(Item item) {
-
+        if (borrowedItems.contains(item)) {
+            item.setStatus(Item.Status.IN_STORE);
+            borrowedItems.remove(item);
+            return true;
+        }
+        return false;
     }
 }
