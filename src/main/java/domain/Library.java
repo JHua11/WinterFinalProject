@@ -1,6 +1,7 @@
 package domain;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
@@ -71,7 +72,79 @@ public class Library {
     /**
      * loads user and item data from csv files
      */
-    public static void load() {}
+    public static void load() {
+        loadItems();
+        loadUsers();
+    }
+
+    /**
+     * helper method for load() that handles data from items.csv
+     */
+    public static void loadItems() {
+        String path = "src/main/resources/items.csv";
+        File file = new File(path);
+        try (Scanner scanner = new Scanner(file)) {
+            while (scanner.hasNext()) {
+                String line = scanner.next();
+                String[] elements = line.split(",");
+
+                String type = elements[0];
+
+                Item.Status status = switch (elements[3]) {
+                    case "BORROWED" -> Item.Status.BORROWED;
+                    case "IN_STORE" -> Item.Status.IN_STORE;
+                    case "LOST" -> Item.Status.LOST;
+                    default -> null;
+                };
+
+                switch (type) {
+                    case "BOOK" -> items.add(new Book(elements[1], elements[2], status, elements[4], elements[5], elements[6]));
+                    case "DVD" -> items.add(new DVD(elements[1], elements[2], status, elements[4], Integer.parseInt(elements[5])));
+                    case "MAGAZINE" -> items.add(new Magazine(elements[1], elements[2], status, Integer.parseInt(elements[4]), elements[5]));
+                    default -> {}
+                }
+            }
+        } catch (FileNotFoundException e) {
+            // ignore
+        }
+    }
+
+    /**
+     * helper method for load() that handles data from users.csv
+     */
+    public static void loadUsers() {
+        String path = "src/main/resources/users.csv";
+        File file = new File(path);
+        try (Scanner scanner = new Scanner(file)) {
+            while (scanner.hasNext()) {
+                String line = scanner.next();
+                String[] elements = line.split(",");
+
+                String type = elements[0];
+
+                List<Item> borrowedItems = new ArrayList<>();
+                String[] itemIDs = Arrays.copyOfRange(elements, 3, elements.length);
+                for (String id : itemIDs) {
+                    for (Item item : items) {
+                        if (item.id.equals(id)) {
+                            borrowedItems.add(item);
+                            break;
+                        }
+                    }
+                }
+
+                switch (type) {
+                    case "STUDENT" -> users.add(new Student(elements[1], elements[2], borrowedItems));
+                    case "TEACHER" -> users.add(new Teacher(elements[1], elements[2], borrowedItems));
+                    case "ADMIN" -> users.add(new Admin(elements[1], elements[2]));
+                    default -> {}
+                }
+            }
+        } catch (FileNotFoundException e) {
+            // ignore
+        }
+    }
+
 
     /**
      * searches available items in library that contain a given keyword
@@ -106,7 +179,8 @@ public class Library {
      * @return a map of the relevant items, sorted by their type
      */
     public static Map<ItemType, Set<Item>> recursiveSearch(String keyword) {
-
+        return new HashMap<>();
+        // TODO : implement.
     }
 
     public enum ItemType {
