@@ -2,11 +2,13 @@ package domain;
 
 import exceptions.ItemLimitReachedException;
 import exceptions.ItemUnavailableException;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@AllArgsConstructor
 public class Student extends User {
     private static final int MAX_BOOKS = 5;
     /**

@@ -11,7 +11,7 @@ import java.util.List;
 @EqualsAndHashCode
 @Getter
 @Setter
-public abstract class User {
+public abstract class User implements Comparable<User> {
     protected String id;
     protected String name;
     protected List<Item> borrowedItems;
@@ -34,5 +34,10 @@ public abstract class User {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public int compareTo(User o) {
+        return id.compareTo(o.id);
     }
 }
