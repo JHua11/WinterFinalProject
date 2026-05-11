@@ -6,11 +6,16 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.util.List;
+
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@AllArgsConstructor
 public class Teacher extends User {
     private static final int MAX_ITEMS = 10;
+
+    public Teacher(String id, String name, List<Item> borrowedItems) {
+        super(id, name, borrowedItems);
+    }
 
     /**
      * Allows teachers to borrow an item, up to 10 total
