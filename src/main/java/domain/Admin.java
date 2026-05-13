@@ -1,17 +1,16 @@
 package domain;
 
 import interfaces.Reportable;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import java.util.List;
+import java.util.ArrayList;
 
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class Admin extends User implements Reportable {
     public Admin(String id, String name) {
-        super(id, name, null);
+        super(id, name, new ArrayList<>());
     }
 
     public Admin(String name) {
@@ -29,6 +28,6 @@ public class Admin extends User implements Reportable {
      * Exports user and item data into the csv files
      */
     public static void backUpData() {
-
+        Library.export();
     }
 }
