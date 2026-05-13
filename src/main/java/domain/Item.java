@@ -2,6 +2,8 @@ package domain;
 
 import lombok.*;
 
+import java.util.Comparator;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
@@ -31,5 +33,21 @@ public abstract class Item implements Comparable<Item> {
         BORROWED,
         IN_STORE,
         LOST
+    }
+
+    @NoArgsConstructor
+    public static class ItemIdComparator implements Comparator<Item> {
+        @Override
+        public int compare(Item o1, Item o2) {
+            return o1.id.compareTo(o2.id);
+        }
+    }
+
+    @NoArgsConstructor
+    public static class ItemTitleComparator implements Comparator<Item> {
+        @Override
+        public int compare(Item o1, Item o2) {
+            return o1.title.compareTo(o2.title);
+        }
     }
 }
