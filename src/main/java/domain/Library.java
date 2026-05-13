@@ -1,5 +1,7 @@
 package domain;
 
+import com.sun.source.tree.Tree;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -7,8 +9,8 @@ import java.io.IOException;
 import java.util.*;
 
 public class Library {
-    public static List<User> users;
-    public static List<Item> items;
+    public static List<User> users = new ArrayList<>();
+    public static List<Item> items = new ArrayList<>();
 
     /**
      * exports user and item data to csv files
@@ -60,7 +62,7 @@ public class Library {
                     fileWriter.write(String.format("ADMIN,%s,%s", user.id, user.name));
                 }
                 for (Item item : user.borrowedItems) {
-                    fileWriter.write(item.id);
+                    fileWriter.write("," + item.id);
                 }
                 fileWriter.write("\n");
             }
@@ -148,39 +150,94 @@ public class Library {
 
     /**
      * searches available items in library that contain a given keyword
-     * (in title, isbn, author. director, issue number, etc) using stream
+     * (in title, isbn, author. director, issue number, etc.) using stream
      * @param keyword the keyword
+     * @param sortByTitle whether the user wants to sort results by title or not (sort by default - id)
      * @return a map of the relevant items, sorted by their type
      */
-    public static Map<ItemType, Set<Item>> streamSearch(String keyword) {
+    public static Map<ItemType, Set<Item>> streamSearch(String keyword, Boolean sortByTitle) {
+        Comparator<Item> comparator;
+        comparator = (sortByTitle) ? new Item.ItemTitleComparator() : new Item.ItemIdComparator();
+        Set<String> seen = new HashSet<>();
         Map<ItemType, Set<Item>> map = new TreeMap<>();
-        map.put(ItemType.BOOK, new TreeSet<>());
-        map.put(ItemType.DVD, new TreeSet<>());
-        map.put(ItemType.MAGAZINE, new TreeSet<>());
+        map.put(ItemType.BOOK, new TreeSet<>(comparator));
+        map.put(ItemType.DVD, new TreeSet<>(comparator));
+        map.put(ItemType.MAGAZINE, new TreeSet<>(comparator));
         List<Item> filteredItems = items.stream()
                 .filter(item -> (item.toString().toLowerCase().contains(keyword.toLowerCase())))
+                .filter(item -> {
+                    String key = switch (item) {
+                        case Book book -> book.getIsbn();
+                        case DVD dvd -> dvd.getTitle() + dvd.getDirector();
+                        case Magazine mag -> mag.getPublisher() + mag.getIssueNumber();
+                        default -> item.getId();
+                    };
+                    return seen.add(key);
+                })
                 .toList();
         for (Item item : filteredItems) {
-            if (item instanceof Book) {
-                map.get(ItemType.BOOK).add(item);
-            } else if (item instanceof DVD) {
-                map.get(ItemType.DVD).add(item);
-            } else if (item instanceof Magazine) {
-                map.get(ItemType.MAGAZINE).add(item);
+            switch (item) {
+                case Book book -> map.get(ItemType.BOOK).add(item);
+                case DVD dvd -> map.get(ItemType.DVD).add(item);
+                case Magazine magazine -> map.get(ItemType.MAGAZINE).add(item);
+                default -> {}
             }
         }
         return map;
     }
 
     /**
-     * searches available items in library that contain a given keyword
-     * (in title, isbn, author. director, issue number, etc) using recursion
+     * searches for items in the list of items in Library that contain a given keyword (case-insensitive)
      * @param keyword the keyword
-     * @return a map of the relevant items, sorted by their type
+     * @param sortByTitle whether to sort by title alphabetically or not (default - id)
+     * @return a map of the results, sorted by their type (book, magazine, dvd)
      */
-    public static Map<ItemType, Set<Item>> recursiveSearch(String keyword) {
-        return new HashMap<>();
-        // TODO : implement.
+    public static Map<ItemType, Set<Item>> recursiveSearch(String keyword, boolean sortByTitle) {
+        Set<Item> results = recursiveSearchHelper(items, keyword, new HashSet<>());
+
+        Comparator<Item> comparator;
+        comparator = (sortByTitle) ? new Item.ItemTitleComparator() : new Item.ItemIdComparator();
+        Map<ItemType, Set<Item>> map = new TreeMap<>();
+        map.put(ItemType.BOOK, new TreeSet<>(comparator));
+        map.put(ItemType.DVD, new TreeSet<>(comparator));
+        map.put(ItemType.MAGAZINE, new TreeSet<>(comparator));
+
+        for (Item item : results) {
+            switch (item) {
+                case Book book -> map.get(ItemType.BOOK).add(item);
+                case DVD dvd -> map.get(ItemType.DVD).add(item);
+                case Magazine magazine -> map.get(ItemType.MAGAZINE).add(item);
+                default -> {}
+            }
+        }
+        return map;
+    }
+
+    /**
+     * (helper method for recursiveSearch) searches for items in a list of items that contain a given keyword
+     * (in title, isbn, author. director, issue number, etc.) using recursion
+     * @param searchedItems the list of items to be searched
+     * @param keyword the keyword
+     * @param seen a set of keys used to check whether an item was already included
+     * @return a set of the relevant items, sorted by their id
+     */
+    public static Set<Item> recursiveSearchHelper(List<Item> searchedItems, String keyword, Set<String> seen) {
+        if (searchedItems.isEmpty()) {
+            return new TreeSet<>();
+        }
+        Item firstItem = searchedItems.getFirst();
+        String key = switch (firstItem) {
+            case Book book -> book.getIsbn();
+            case DVD dvd -> dvd.getTitle() + dvd.getDirector();
+            case Magazine mag -> mag.getPublisher() + mag.getIssueNumber();
+            default -> firstItem.getId();
+        };
+        List<Item> subList = searchedItems.subList(1, searchedItems.size());
+        Set<Item> set = new TreeSet<>(recursiveSearchHelper(subList, keyword, seen));
+        if (firstItem.toString().toLowerCase().contains(keyword.toLowerCase()) && seen.add(key)) {
+            set.add(firstItem);
+        }
+        return set;
     }
 
     public enum ItemType {
