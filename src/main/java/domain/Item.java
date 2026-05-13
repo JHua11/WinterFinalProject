@@ -4,6 +4,8 @@ import lombok.*;
 
 import java.util.Comparator;
 
+import static domain.Library.items;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
@@ -26,7 +28,7 @@ public abstract class Item implements Comparable<Item> {
         this.id = String.format("%05d", nextId++);
         this.title = title;
         this.status = Status.IN_STORE;
-        // TODO: add to item list in library
+        items.add(this);
     }
 
     public enum Status {
