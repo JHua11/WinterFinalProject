@@ -5,6 +5,8 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static domain.Library.users;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
@@ -22,7 +24,7 @@ public abstract class User implements Comparable<User> {
         this.id = String.format("%05d", nextId++);
         this.name = name;
         this.borrowedItems = new ArrayList<>();
-        // TODO: add new users to library list of users
+        users.add(this);
     }
 
     public abstract boolean borrow(Item item);
