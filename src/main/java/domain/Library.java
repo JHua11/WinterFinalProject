@@ -1,12 +1,13 @@
 package domain;
 
-import com.sun.source.tree.Tree;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+
+import static domain.Item.nextId;
 
 public class Library {
     public static List<User> users = new ArrayList<>();
@@ -87,7 +88,7 @@ public class Library {
         File file = new File(path);
         try (Scanner scanner = new Scanner(file)) {
             while (scanner.hasNext()) {
-                String line = scanner.next();
+                String line = scanner.nextLine();
                 String[] elements = line.split(",");
 
                 String type = elements[0];
@@ -105,6 +106,8 @@ public class Library {
                     case "MAGAZINE" -> items.add(new Magazine(elements[1], elements[2], status, Integer.parseInt(elements[4]), elements[5]));
                     default -> {}
                 }
+
+                Item.nextId = Integer.parseInt(items.getLast().getId()) + 1; // Items are sorted by id when being exported using export()
             }
         } catch (FileNotFoundException e) {
             // ignore
@@ -119,7 +122,7 @@ public class Library {
         File file = new File(path);
         try (Scanner scanner = new Scanner(file)) {
             while (scanner.hasNext()) {
-                String line = scanner.next();
+                String line = scanner.nextLine();
                 String[] elements = line.split(",");
 
                 String type = elements[0];
@@ -141,6 +144,8 @@ public class Library {
                     case "ADMIN" -> users.add(new Admin(elements[1], elements[2]));
                     default -> {}
                 }
+
+                User.nextId = Integer.parseInt(users.getLast().getId()) + 1; // Users are sorted by id when being exported using export()
             }
         } catch (FileNotFoundException e) {
             // ignore
@@ -168,8 +173,8 @@ public class Library {
                 .filter(item -> {
                     String key = switch (item) {
                         case Book book -> book.getIsbn();
-                        case DVD dvd -> dvd.getTitle() + dvd.getDirector();
-                        case Magazine mag -> mag.getPublisher() + mag.getIssueNumber();
+                        case DVD dvd -> dvd.getTitle() + "|" + dvd.getDirector();
+                        case Magazine mag -> mag.getPublisher() + "|" + mag.getIssueNumber();
                         default -> item.getId();
                     };
                     return seen.add(key);
@@ -227,15 +232,15 @@ public class Library {
      * @param seen a set of keys used to check whether an item was already included
      * @return a set of the relevant items, sorted by their id
      */
-    public static Set<Item> recursiveSearchHelper(List<Item> searchedItems, String keyword, Set<String> seen) {
+    private static Set<Item> recursiveSearchHelper(List<Item> searchedItems, String keyword, Set<String> seen) {
         if (searchedItems.isEmpty()) {
             return new TreeSet<>();
         }
         Item firstItem = searchedItems.getFirst();
         String key = switch (firstItem) {
             case Book book -> book.getIsbn();
-            case DVD dvd -> dvd.getTitle() + dvd.getDirector();
-            case Magazine mag -> mag.getPublisher() + mag.getIssueNumber();
+            case DVD dvd -> dvd.getTitle() + "|" + dvd.getDirector();
+            case Magazine mag -> mag.getPublisher() + "|" + mag.getIssueNumber();
             default -> firstItem.getId();
         };
         List<Item> subList = searchedItems.subList(1, searchedItems.size());
