@@ -20,8 +20,10 @@ public class Book extends Item {
 
     public Book(String title, String isbn, String author, String genre) {
         super(title);
+        if (isbn.matches("\\d{13}")) {
         this.isbn = isbn;
         this.author = author;
         this.genre = genre;
+        }
     }
 }
