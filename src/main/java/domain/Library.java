@@ -176,11 +176,14 @@ public class Library {
                 })
                 .toList();
         for (Item item : filteredItems) {
-            switch (item) {
-                case Book book -> map.get(ItemType.BOOK).add(item);
-                case DVD dvd -> map.get(ItemType.DVD).add(item);
-                case Magazine magazine -> map.get(ItemType.MAGAZINE).add(item);
-                default -> {}
+            ItemType type = switch (item) {
+                case Book book -> ItemType.BOOK;
+                case DVD dvd -> ItemType.DVD;
+                case Magazine magazine -> ItemType.MAGAZINE;
+                default -> null;
+            };
+            if (type != null) {
+                map.get(type).add(item);
             }
         }
         return map;
@@ -203,11 +206,14 @@ public class Library {
         map.put(ItemType.MAGAZINE, new TreeSet<>(comparator));
 
         for (Item item : results) {
-            switch (item) {
-                case Book book -> map.get(ItemType.BOOK).add(item);
-                case DVD dvd -> map.get(ItemType.DVD).add(item);
-                case Magazine magazine -> map.get(ItemType.MAGAZINE).add(item);
-                default -> {}
+            ItemType type = switch (item) {
+                case Book book -> ItemType.BOOK;
+                case DVD dvd -> ItemType.DVD;
+                case Magazine magazine -> ItemType.MAGAZINE;
+                default -> null;
+            };
+            if (type != null) {
+                map.get(type).add(item);
             }
         }
         return map;
