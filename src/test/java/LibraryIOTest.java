@@ -4,24 +4,18 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.List;
-
-import static domain.Library.items;
-import static domain.Library.users;
-import static org.junit.jupiter.api.Assertions.*;
-
-
-    import domain.*;
-import org.junit.jupiter.api.*;
-import org.junit.platform.commons.function.Try;
-
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
+import static domain.Library.items;
+import static domain.Library.users;
+import domain.*;
+
 import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.*;
+
 public class LibraryIOTest {
     private static final String ITEMS_PATH = "src/main/resources/items.csv";
     private static final String USERS_PATH = "src/main/resources/users.csv";
