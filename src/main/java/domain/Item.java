@@ -17,7 +17,7 @@ public abstract class Item implements Comparable<Item> {
     protected String title;
     protected Status status;
 
-    protected static int nextId = 1;
+    @Setter @Getter protected static int nextId = 1;
 
     @Override
     public int compareTo(Item o) {

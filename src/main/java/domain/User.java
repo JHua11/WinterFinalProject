@@ -18,7 +18,7 @@ public abstract class User implements Comparable<User> {
     protected String name;
     protected List<Item> borrowedItems;
 
-    protected static int nextId = 1;
+    @Setter @Getter protected static int nextId = 1;
 
     public User(String name) {
         this.id = String.format("%05d", nextId++);
