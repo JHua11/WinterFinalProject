@@ -7,8 +7,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
-import static domain.Item.nextId;
-
 public class Library {
     public static List<User> users = new ArrayList<>();
     public static List<Item> items = new ArrayList<>();
@@ -83,7 +81,7 @@ public class Library {
     /**
      * helper method for load() that handles data from items.csv
      */
-    public static void loadItems() {
+    private static void loadItems() {
         String path = "src/main/resources/items.csv";
         File file = new File(path);
         try (Scanner scanner = new Scanner(file)) {
@@ -117,7 +115,7 @@ public class Library {
     /**
      * helper method for load() that handles data from users.csv
      */
-    public static void loadUsers() {
+    private static void loadUsers() {
         String path = "src/main/resources/users.csv";
         File file = new File(path);
         try (Scanner scanner = new Scanner(file)) {
