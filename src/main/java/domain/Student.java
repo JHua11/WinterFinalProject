@@ -16,6 +16,11 @@ public class Student extends User {
     public Student(String id, String name, List<Item> borrowedItems) {
         super(id, name, borrowedItems);
     }
+
+    public Student(String name) {
+        super(name);
+    }
+
     /**
      * Allows students to borrow a book, up to 5 total
      * @param book the book to be borrowed

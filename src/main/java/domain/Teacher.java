@@ -13,6 +13,10 @@ import java.util.List;
 public class Teacher extends User {
     private static final int MAX_ITEMS = 10;
 
+    public Teacher(String name) {
+        super(name);
+    }
+
     public Teacher(String id, String name, List<Item> borrowedItems) {
         super(id, name, borrowedItems);
     }
