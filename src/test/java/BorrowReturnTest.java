@@ -128,4 +128,3 @@ public class BorrowReturnTest {
         assertEquals(Item.Status.IN_STORE, book.getStatus());
     }
 }
-

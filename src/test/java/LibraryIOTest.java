@@ -219,5 +219,3 @@ public class LibraryIOTest {
         assertEquals(book, users.getFirst().getBorrowedItems().getFirst());
     }
 }
-
-
